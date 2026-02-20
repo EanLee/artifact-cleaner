@@ -26,8 +26,11 @@ public static class ConfigCommand
             var config = service.Load();
             AnsiConsole.MarkupLine($"[dim]Config: {Markup.Escape(service.ConfigPath)}[/]");
             AnsiConsole.MarkupLine("[bold]目標資料夾：[/]");
-            foreach (var t in config.Targets)
-                AnsiConsole.MarkupLine($"  [cyan]{Markup.Escape(t)}[/]");
+            if (config.Targets.Count == 0)
+                AnsiConsole.MarkupLine("  [dim](無)[/]");
+            else
+                foreach (var t in config.Targets)
+                    AnsiConsole.MarkupLine($"  [cyan]{Markup.Escape(t)}[/]");
         });
         return cmd;
     }
@@ -75,7 +78,10 @@ public static class ConfigCommand
             var removed = config.Targets.RemoveAll(t =>
                 names.Any(n => string.Equals(n, t, StringComparison.OrdinalIgnoreCase)));
             service.Save(config);
-            AnsiConsole.MarkupLine($"[green]✓[/] 已移除 {removed} 個");
+            if (removed > 0)
+                AnsiConsole.MarkupLine($"[green]✓[/] 已移除 {removed} 個");
+            else
+                AnsiConsole.MarkupLine("[yellow]找不到指定名稱，無項目被移除[/]");
         });
         return cmd;
     }
