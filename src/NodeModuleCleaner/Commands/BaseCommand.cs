@@ -61,7 +61,7 @@ public static class BaseCommand
         var targetLabel = string.Join(", ", effectiveTargets);
 
         return await AnsiConsole.Status()
-            .StartAsync($"掃描 [{targetLabel}] 資料夾中...", ctx =>
+            .StartAsync($"掃描 [[{Markup.Escape(targetLabel)}]] 資料夾中...", ctx =>
             {
                 return Task.Run(() =>
                 {
