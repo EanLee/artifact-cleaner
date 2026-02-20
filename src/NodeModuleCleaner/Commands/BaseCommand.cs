@@ -56,8 +56,10 @@ public static class BaseCommand
         var scanner = new NodeModulesScanner();
         var calculator = new SizeCalculator();
 
-        // 若未指定 targets，從 config 讀取
-        var effectiveTargets = targets?.ToList() ?? new ConfigService().Load().Targets;
+        // 若未指定 targets（null 或空陣列），從 config 讀取
+        var effectiveTargets = (targets != null && targets.Any())
+            ? targets.ToList()
+            : new ConfigService().Load().Targets;
         var targetLabel = string.Join(", ", effectiveTargets);
 
         return await AnsiConsole.Status()
