@@ -87,21 +87,61 @@ public class NodeModulesScannerTests
         // Arrange
         var scanner = new NodeModulesScanner();
 
-        // 建立系統資料夾
+        // .git / .vs 下的 node_modules 應被跳過
         Directory.CreateDirectory(Path.Combine(_testDir, ".git", "node_modules"));
         Directory.CreateDirectory(Path.Combine(_testDir, ".vs", "node_modules"));
-        Directory.CreateDirectory(Path.Combine(_testDir, "bin", "node_modules"));
 
-        // 建立正常的 node_modules
         var validNodeModules = Path.Combine(_testDir, "project", "node_modules");
         Directory.CreateDirectory(validNodeModules);
 
         // Act
         var results = scanner.ScanDirectory(_testDir).ToList();
 
-        // Assert - 應該只找到 project 下的，系統資料夾被跳過
+        // Assert
         Assert.Single(results);
         Assert.Equal(validNodeModules, results[0].FullName);
+
+        // Cleanup
+        Directory.Delete(_testDir, true);
+    }
+
+    [Fact]
+    public void ScanDirectory_CustomTargets_FindsBinAndObj()
+    {
+        // Arrange
+        var scanner = new NodeModulesScanner();
+        var bin = Path.Combine(_testDir, "MyProject", "bin");
+        var obj = Path.Combine(_testDir, "MyProject", "obj");
+        Directory.CreateDirectory(bin);
+        Directory.CreateDirectory(obj);
+
+        // Act
+        var results = scanner.ScanDirectory(_testDir, targets: ["bin", "obj"]).ToList();
+
+        // Assert
+        Assert.Equal(2, results.Count);
+        Assert.Contains(results, d => d.FullName == bin);
+        Assert.Contains(results, d => d.FullName == obj);
+
+        // Cleanup
+        Directory.Delete(_testDir, true);
+    }
+
+    [Fact]
+    public void ScanDirectory_CustomTargets_DoesNotRecurseIntoTarget()
+    {
+        // Arrange
+        var scanner = new NodeModulesScanner();
+        var outerBin = Path.Combine(_testDir, "MyProject", "bin");
+        var innerBin = Path.Combine(outerBin, "Debug", "bin"); // bin 內還有 bin，不應被找到
+        Directory.CreateDirectory(innerBin);
+
+        // Act
+        var results = scanner.ScanDirectory(_testDir, targets: ["bin"]).ToList();
+
+        // Assert - 只找到外層 bin
+        Assert.Single(results);
+        Assert.Equal(outerBin, results[0].FullName);
 
         // Cleanup
         Directory.Delete(_testDir, true);
