@@ -18,31 +18,34 @@ public static class CleanCommand
         var pathArgument = BaseCommand.CreatePathArgument();
         var depthOption = BaseCommand.CreateDepthOption();
         var minSizeOption = BaseCommand.CreateMinSizeOption();
+        var folderOption = BaseCommand.CreateFolderOption();
 
         command.Arguments.Add(pathArgument);
         command.Options.Add(depthOption);
         command.Options.Add(minSizeOption);
+        command.Options.Add(folderOption);
 
         command.SetAction(async parseResult =>
         {
             var path = parseResult.GetValue(pathArgument);
             var depth = parseResult.GetValue(depthOption);
             var minSize = parseResult.GetValue(minSizeOption);
+            var folders = parseResult.GetValue(folderOption);
 
-            await ExecuteAsync(path!, depth, minSize);
+            await ExecuteAsync(path!, depth, minSize, folders);
         });
 
         return command;
     }
 
-    private static async Task ExecuteAsync(string rootPath, int? maxDepth, long? minSize)
+    private static async Task ExecuteAsync(string rootPath, int? maxDepth, long? minSize, string[]? folders)
     {
         // Step 1: 掃描
-        var results = await BaseCommand.ScanNodeModulesAsync(rootPath, maxDepth, minSize);
+        var results = await BaseCommand.ScanNodeModulesAsync(rootPath, maxDepth, minSize, folders);
 
         if (results.Count == 0)
         {
-            AnsiConsole.MarkupLine("[yellow]⚠ 沒有找到 node_modules 資料夾[/]");
+            AnsiConsole.MarkupLine("[yellow]⚠ 沒有找到符合的資料夾[/]");
             return;
         }
 
@@ -71,21 +74,25 @@ public static class CleanCommand
 
     private static List<ScanResult> PromptForSelection(List<ScanResult> results)
     {
-        var choices = results
-            .OrderByDescending(r => r.SizeInBytes)
+        var ordered = results.OrderByDescending(r => r.SizeInBytes).ToList();
+        var choices = ordered
             .Select(r => $"{r.Path} ({BaseCommand.FormatSize(r.SizeInBytes)})")
             .ToList();
 
-        var selected = AnsiConsole.Prompt(
-            new MultiSelectionPrompt<string>()
-                .Title("[yellow]選擇要刪除的資料夾 (Space 切換, Enter 確認):[/]")
-                .PageSize(10)
-                .MoreChoicesText("[grey](上下移動查看更多)[/]")
-                .InstructionsText("[grey](使用 Space 鍵選擇, Enter 確認)[/]")
-                .AddChoices(choices)
-        );
+        var prompt = new MultiSelectionPrompt<string>()
+            .Title("[yellow]選擇要刪除的資料夾 (Space 取消勾選, Enter 確認):[/]")
+            .PageSize(15)
+            .MoreChoicesText("[grey](上下移動查看更多)[/]")
+            .InstructionsText("[grey](預設全選；Space 取消勾選，Enter 確認)[/]")
+            .AddChoices(choices);
 
-        return results
+        // 預設全選，讓使用者只需取消不想刪的項目
+        foreach (var choice in choices)
+            prompt.Select(choice);
+
+        var selected = AnsiConsole.Prompt(prompt);
+
+        return ordered
             .Where(r => selected.Any(s => s.StartsWith(r.Path)))
             .ToList();
     }
@@ -106,6 +113,7 @@ public static class CleanCommand
         int successCount = 0;
         int failCount = 0;
         long freedSpace = 0;
+        var logs = new List<(bool success, string path, string? error)>();
 
         await AnsiConsole.Progress()
             .StartAsync(async ctx =>
@@ -117,16 +125,15 @@ public static class CleanCommand
                     var dir = new DirectoryInfo(result.Path);
                     var success = cleaner.DeleteDirectory(dir, out var error);
 
+                    logs.Add((success, result.Path, error));
+
                     if (success)
                     {
-                        AnsiConsole.MarkupLine($"[green]✓[/] 已刪除: {result.Path}");
                         successCount++;
                         freedSpace += result.SizeInBytes;
                     }
                     else
                     {
-                        AnsiConsole.MarkupLine($"[red]✗[/] 刪除失敗: {result.Path}");
-                        AnsiConsole.MarkupLine($"[dim]  {error}[/]");
                         failCount++;
                     }
 
@@ -135,6 +142,22 @@ public static class CleanCommand
                 }
             });
 
+        // Progress bar 結束後才輸出 log，避免被覆蓋
+        AnsiConsole.WriteLine();
+        foreach (var (success, path, error) in logs)
+        {
+            if (success)
+            {
+                AnsiConsole.MarkupLine($"[green]✓[/] 已刪除: {Markup.Escape(path)}");
+            }
+            else
+            {
+                AnsiConsole.MarkupLine($"[red]✗[/] 刪除失敗: {Markup.Escape(path)}");
+                AnsiConsole.MarkupLine($"[dim]  {Markup.Escape(error ?? "")}[/]");
+            }
+        }
+
+        AnsiConsole.WriteLine();
         DisplayDeletionSummary(successCount, failCount, freedSpace);
     }
 

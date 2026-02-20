@@ -1,5 +1,6 @@
 using NodeModuleCleaner.Core;
 using NodeModuleCleaner.Models;
+using NodeModuleCleaner.Services;
 using Spectre.Console;
 using System.CommandLine;
 
@@ -34,25 +35,39 @@ public static class BaseCommand
         };
     }
 
+    public static Option<string[]> CreateFolderOption()
+    {
+        return new Option<string[]>("--folder")
+        {
+            Description = "臨時覆蓋目標資料夾名稱（不影響 config）",
+            Arity = ArgumentArity.OneOrMore,
+        };
+    }
+
     /// <summary>
     /// 執行掃描並回傳結果（平行化版本）
     /// </summary>
     public static async Task<List<ScanResult>> ScanNodeModulesAsync(
         string rootPath,
         int? maxDepth,
-        long? minSize)
+        long? minSize,
+        IEnumerable<string>? targets = null)
     {
         var scanner = new NodeModulesScanner();
         var calculator = new SizeCalculator();
 
+        // 若未指定 targets，從 config 讀取
+        var effectiveTargets = targets?.ToList() ?? new ConfigService().Load().Targets;
+        var targetLabel = string.Join(", ", effectiveTargets);
+
         return await AnsiConsole.Status()
-            .StartAsync("掃描 node_modules 資料夾中...", ctx =>
+            .StartAsync($"掃描 [{targetLabel}] 資料夾中...", ctx =>
             {
                 return Task.Run(() =>
                 {
                     try
                     {
-                        var directories = scanner.ScanDirectory(rootPath, maxDepth).ToList();
+                        var directories = scanner.ScanDirectory(rootPath, maxDepth, effectiveTargets).ToList();
 
                         // 平行計算所有 node_modules 的大小
                         var results = directories

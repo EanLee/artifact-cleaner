@@ -16,30 +16,33 @@ public static class ScanCommand
         var pathArgument = BaseCommand.CreatePathArgument();
         var depthOption = BaseCommand.CreateDepthOption();
         var minSizeOption = BaseCommand.CreateMinSizeOption();
+        var folderOption = BaseCommand.CreateFolderOption();
 
         command.Arguments.Add(pathArgument);
         command.Options.Add(depthOption);
         command.Options.Add(minSizeOption);
+        command.Options.Add(folderOption);
 
         command.SetAction(async parseResult =>
         {
             var path = parseResult.GetValue(pathArgument);
             var depth = parseResult.GetValue(depthOption);
             var minSize = parseResult.GetValue(minSizeOption);
+            var folders = parseResult.GetValue(folderOption);
 
-            await ExecuteAsync(path!, depth, minSize);
+            await ExecuteAsync(path!, depth, minSize, folders);
         });
 
         return command;
     }
 
-    private static async Task ExecuteAsync(string rootPath, int? maxDepth, long? minSize)
+    private static async Task ExecuteAsync(string rootPath, int? maxDepth, long? minSize, string[]? folders)
     {
-        var results = await BaseCommand.ScanNodeModulesAsync(rootPath, maxDepth, minSize);
+        var results = await BaseCommand.ScanNodeModulesAsync(rootPath, maxDepth, minSize, folders);
 
         if (results.Count == 0)
         {
-            AnsiConsole.MarkupLine("[yellow]⚠ 沒有找到 node_modules 資料夾[/]");
+            AnsiConsole.MarkupLine("[yellow]⚠ 沒有找到符合的資料夾[/]");
             return;
         }
 
