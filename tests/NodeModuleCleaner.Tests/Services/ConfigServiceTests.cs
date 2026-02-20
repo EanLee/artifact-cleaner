@@ -26,6 +26,7 @@ public class ConfigServiceTests : IDisposable
         var config = _service.Load();
         config.Targets = ["bin", "obj"];
         _service.Save(config);
+        Assert.True(File.Exists(_tempPath)); // verify file was actually written
 
         var loaded = _service.Load();
         Assert.Equal(["bin", "obj"], loaded.Targets);

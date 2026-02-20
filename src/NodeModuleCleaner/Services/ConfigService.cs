@@ -25,7 +25,7 @@ public class ConfigService
             var json = File.ReadAllText(_configPath);
             return JsonSerializer.Deserialize<AppConfig>(json) ?? new AppConfig();
         }
-        catch
+        catch (JsonException)
         {
             return new AppConfig();
         }
