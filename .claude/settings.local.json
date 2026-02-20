@@ -19,7 +19,10 @@
       "Bash(dotnet format:*)",
       "mcp__plugin_context7_context7__resolve-library-id",
       "mcp__plugin_context7_context7__query-docs",
-      "Bash(dotnet run:*)"
+      "Bash(dotnet run:*)",
+      "Bash(cat:*)",
+      "Bash(dotnet publish:*)",
+      "Bash(./node-cleaner:*)"
     ]
   }
 }
