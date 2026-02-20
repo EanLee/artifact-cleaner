@@ -5,6 +5,18 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <!-- 發布設定 -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+    <!-- 組件資訊 -->
+    <Version>1.0.0</Version>
+    <AssemblyName>node-cleaner</AssemblyName>
+    <Product>Node Modules Cleaner</Product>
+    <Description>快速掃描和清理 node_modules 資料夾的 CLI 工具</Description>
   </PropertyGroup>
 
   <ItemGroup>
