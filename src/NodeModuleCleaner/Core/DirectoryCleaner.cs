@@ -23,8 +23,7 @@ public class DirectoryCleaner
                 return false;
             }
 
-            // 遞迴刪除資料夾及所有內容
-            Directory.Delete(directory.FullName, recursive: true);
+            DeleteRecursively(directory);
             return true;
         }
         catch (UnauthorizedAccessException ex)
@@ -42,5 +41,37 @@ public class DirectoryCleaner
             error = $"Unexpected error: {ex.Message}";
             return false;
         }
+    }
+
+    /// <summary>
+    /// 自訂遞迴刪除：遇到 junction point / symlink 只刪連結本身，不跟進目標
+    /// 避免 pnpm 的 .pnpm 目錄造成 Access Denied
+    /// </summary>
+    private static void DeleteRecursively(DirectoryInfo directory)
+    {
+        foreach (var subDir in directory.EnumerateDirectories())
+        {
+            if (subDir.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
+                // junction point / symlink：只刪連結，不動目標內容
+                subDir.Delete(recursive: false);
+            }
+            else
+            {
+                DeleteRecursively(subDir);
+            }
+        }
+
+        foreach (var file in directory.EnumerateFiles())
+        {
+            // 移除唯讀屬性，避免部分 npm 套件設為唯讀
+            if (file.Attributes.HasFlag(FileAttributes.ReadOnly))
+            {
+                file.Attributes = FileAttributes.Normal;
+            }
+            file.Delete();
+        }
+
+        directory.Delete(recursive: false);
     }
 }
