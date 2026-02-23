@@ -14,9 +14,15 @@
 
     <!-- 組件資訊 -->
     <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
     <AssemblyName>node-cleaner</AssemblyName>
     <Product>Node Modules Cleaner</Product>
     <Description>快速掃描和清理 node_modules 資料夾的 CLI 工具</Description>
+    <Company>EanLee</Company>
+    <Authors>EanLee</Authors>
+    <Copyright>Copyright © EanLee</Copyright>
+    <NeutralLanguage>zh-TW</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>

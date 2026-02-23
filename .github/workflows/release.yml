@@ -38,6 +38,7 @@ jobs:
           -p:PublishSingleFile=true
           -p:PublishTrimmed=true
           -p:PublishReadyToRun=false
+          -p:EnableCompressionInSingleFile=false
           -o ./artifacts/win-x64
 
       - name: Publish portable
@@ -47,6 +48,7 @@ jobs:
           -r win-x64
           --no-self-contained
           -p:PublishSingleFile=true
+          -p:EnableCompressionInSingleFile=false
           -o ./artifacts/portable
 
       - name: Rename artifacts
