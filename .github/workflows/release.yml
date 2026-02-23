@@ -36,7 +36,24 @@ jobs:
           -r win-x64
           --self-contained true
           -p:PublishSingleFile=true
-          -o ./artifacts
+          -p:PublishTrimmed=true
+          -p:PublishReadyToRun=false
+          -o ./artifacts/win-x64
+
+      - name: Publish portable
+        run: >
+          dotnet publish src/NodeModuleCleaner/NodeModuleCleaner.csproj
+          -c Release
+          -r win-x64
+          --no-self-contained
+          -p:PublishSingleFile=true
+          -o ./artifacts/portable
+
+      - name: Rename artifacts
+        shell: pwsh
+        run: |
+          Move-Item ./artifacts/win-x64/node-cleaner.exe ./artifacts/win-x64/node-cleaner-win-x64.exe
+          Move-Item ./artifacts/portable/node-cleaner.exe ./artifacts/portable/node-cleaner-portable.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -44,4 +61,6 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: ${{ steps.version.outputs.tag }}
           generate_release_notes: true
-          files: ./artifacts/node-cleaner.exe
+          files: |
+            ./artifacts/win-x64/node-cleaner-win-x64.exe
+            ./artifacts/portable/node-cleaner-portable.exe
