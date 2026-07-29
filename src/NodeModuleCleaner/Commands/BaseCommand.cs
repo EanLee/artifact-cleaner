@@ -35,6 +35,14 @@ public static class BaseCommand
         };
     }
 
+    public static Option<int?> CreateOlderThanOption()
+    {
+        return new Option<int?>("--older-than")
+        {
+            Description = "只顯示最後修改時間超過指定天數的資料夾"
+        };
+    }
+
     public static Option<string[]> CreateFolderOption()
     {
         return new Option<string[]>("--folder")
@@ -51,6 +59,7 @@ public static class BaseCommand
         string rootPath,
         int? maxDepth,
         long? minSize,
+        int? olderThanDays = null,
         IEnumerable<string>? targets = null)
     {
         var scanner = new NodeModulesScanner();
@@ -70,6 +79,7 @@ public static class BaseCommand
                     try
                     {
                         var directories = scanner.ScanDirectory(rootPath, maxDepth, effectiveTargets).ToList();
+                        var cutoffDate = olderThanDays.HasValue ? DateTime.Now.AddDays(-olderThanDays.Value) : (DateTime?)null;
 
                         // 平行計算所有 node_modules 的大小
                         var results = directories
@@ -82,6 +92,7 @@ public static class BaseCommand
                                 return new ScanResult(dir.FullName, size, dir.LastWriteTime);
                             })
                             .Where(result => !minSize.HasValue || result.SizeInBytes >= minSize.Value)
+                            .Where(result => !cutoffDate.HasValue || result.LastModified <= cutoffDate.Value)
                             .ToList();
 
                         return results;
