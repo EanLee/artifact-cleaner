@@ -25,9 +25,8 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $date = Get-Date -Format 'yyyy.MM.dd'
-          $sha = git rev-parse --short HEAD
-          echo "tag=v$date-$sha" >> $env:GITHUB_OUTPUT
+          $version = dotnet msbuild src/NodeModuleCleaner/NodeModuleCleaner.csproj -getProperty:Version
+          echo "tag=v$version" >> $env:GITHUB_OUTPUT
 
       - name: Publish win-x64
         run: >
