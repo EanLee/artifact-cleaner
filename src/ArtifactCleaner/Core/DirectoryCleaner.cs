@@ -1,4 +1,4 @@
-namespace NodeModuleCleaner.Core;
+namespace ArtifactCleaner.Core;
 
 /// <summary>
 /// 負責刪除資料夾

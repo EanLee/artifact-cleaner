@@ -1,6 +1,6 @@
-using NodeModuleCleaner.Models;
+using ArtifactCleaner.Models;
 
-namespace NodeModuleCleaner.Tests.Models;
+namespace ArtifactCleaner.Tests.Models;
 
 public class ScanResultTests
 {

@@ -2,7 +2,7 @@ using Spectre.Console;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace NodeModuleCleaner.Commands;
+namespace ArtifactCleaner.Commands;
 
 /// <summary>
 /// Scan 命令：掃描並顯示 node_modules 資料夾
@@ -11,7 +11,7 @@ public static class ScanCommand
 {
     public static Command Create()
     {
-        var command = new Command("scan", "掃描指定目錄下的所有 node_modules 資料夾");
+        var command = new Command("scan", "掃描指定目錄下的所有目標資料夾（預設 node_modules）");
 
         var pathArgument = BaseCommand.CreatePathArgument();
         var depthOption = BaseCommand.CreateDepthOption();
