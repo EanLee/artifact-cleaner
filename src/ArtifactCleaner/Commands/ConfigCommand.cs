@@ -1,9 +1,9 @@
-using NodeModuleCleaner.Models;
-using NodeModuleCleaner.Services;
+using ArtifactCleaner.Models;
+using ArtifactCleaner.Services;
 using Spectre.Console;
 using System.CommandLine;
 
-namespace NodeModuleCleaner.Commands;
+namespace ArtifactCleaner.Commands;
 
 public static class ConfigCommand
 {

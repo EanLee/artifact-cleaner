@@ -1,4 +1,4 @@
-namespace NodeModuleCleaner.Models;
+namespace ArtifactCleaner.Models;
 
 public class AppConfig
 {

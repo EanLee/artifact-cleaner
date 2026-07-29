@@ -1,6 +1,6 @@
-using NodeModuleCleaner.Core;
+using ArtifactCleaner.Core;
 
-namespace NodeModuleCleaner.Tests.Core;
+namespace ArtifactCleaner.Tests.Core;
 
 public class SizeCalculatorTests
 {

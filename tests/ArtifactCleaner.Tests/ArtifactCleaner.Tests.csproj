@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NodeModuleCleaner\NodeModuleCleaner.csproj" />
+    <ProjectReference Include="..\..\src\ArtifactCleaner\ArtifactCleaner.csproj" />
   </ItemGroup>
 
 </Project>

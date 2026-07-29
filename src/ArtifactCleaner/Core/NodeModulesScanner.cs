@@ -1,4 +1,4 @@
-namespace NodeModuleCleaner.Core;
+namespace ArtifactCleaner.Core;
 
 /// <summary>
 /// 負責掃描指定目錄下的所有 node_modules 資料夾

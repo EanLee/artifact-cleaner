@@ -1,10 +1,10 @@
-using NodeModuleCleaner.Core;
-using NodeModuleCleaner.Models;
+using ArtifactCleaner.Core;
+using ArtifactCleaner.Models;
 using Spectre.Console;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace NodeModuleCleaner.Commands;
+namespace ArtifactCleaner.Commands;
 
 /// <summary>
 /// Clean 命令：掃描並互動式刪除 node_modules 資料夾
@@ -13,7 +13,7 @@ public static class CleanCommand
 {
     public static Command Create()
     {
-        var command = new Command("clean", "掃描並互動式刪除 node_modules 資料夾");
+        var command = new Command("clean", "掃描並互動式刪除目標資料夾（預設 node_modules）");
 
         var pathArgument = BaseCommand.CreatePathArgument();
         var depthOption = BaseCommand.CreateDepthOption();
