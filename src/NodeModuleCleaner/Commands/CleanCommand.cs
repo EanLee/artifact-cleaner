@@ -18,11 +18,13 @@ public static class CleanCommand
         var pathArgument = BaseCommand.CreatePathArgument();
         var depthOption = BaseCommand.CreateDepthOption();
         var minSizeOption = BaseCommand.CreateMinSizeOption();
+        var olderThanOption = BaseCommand.CreateOlderThanOption();
         var folderOption = BaseCommand.CreateFolderOption();
 
         command.Arguments.Add(pathArgument);
         command.Options.Add(depthOption);
         command.Options.Add(minSizeOption);
+        command.Options.Add(olderThanOption);
         command.Options.Add(folderOption);
 
         command.SetAction(async parseResult =>
@@ -30,18 +32,19 @@ public static class CleanCommand
             var path = parseResult.GetValue(pathArgument);
             var depth = parseResult.GetValue(depthOption);
             var minSize = parseResult.GetValue(minSizeOption);
+            var olderThan = parseResult.GetValue(olderThanOption);
             var folders = parseResult.GetValue(folderOption);
 
-            await ExecuteAsync(path!, depth, minSize, folders);
+            await ExecuteAsync(path!, depth, minSize, olderThan, folders);
         });
 
         return command;
     }
 
-    private static async Task ExecuteAsync(string rootPath, int? maxDepth, long? minSize, string[]? folders)
+    private static async Task ExecuteAsync(string rootPath, int? maxDepth, long? minSize, int? olderThanDays, string[]? folders)
     {
         // Step 1: 掃描
-        var results = await BaseCommand.ScanNodeModulesAsync(rootPath, maxDepth, minSize, folders);
+        var results = await BaseCommand.ScanNodeModulesAsync(rootPath, maxDepth, minSize, olderThanDays, folders);
 
         if (results.Count == 0)
         {

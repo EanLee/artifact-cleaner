@@ -67,6 +67,7 @@ node-cleaner clean ~/projects
 
 - `--depth <數字>` - 限制掃描深度
 - `--min-size <位元組>` - 只顯示大於指定大小的資料夾
+- `--older-than <天數>` - 只顯示最後修改時間超過指定天數的資料夾
 
 範例:
 ```bash
@@ -76,8 +77,11 @@ node-cleaner scan C:\Projects --depth 2
 # 只顯示大於 100MB 的資料夾
 node-cleaner scan C:\Projects --min-size 104857600
 
+# 只顯示 90 天前就沒更新過的資料夾
+node-cleaner scan C:\Projects --older-than 90
+
 # 組合使用
-node-cleaner clean ~/projects --depth 3 --min-size 52428800
+node-cleaner clean ~/projects --depth 3 --min-size 52428800 --older-than 30
 ```
 
 ## 使用範例
