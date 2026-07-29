@@ -1,10 +1,10 @@
-using NodeModuleCleaner.Core;
-using NodeModuleCleaner.Models;
-using NodeModuleCleaner.Services;
+using ArtifactCleaner.Core;
+using ArtifactCleaner.Models;
+using ArtifactCleaner.Services;
 using Spectre.Console;
 using System.CommandLine;
 
-namespace NodeModuleCleaner.Commands;
+namespace ArtifactCleaner.Commands;
 
 /// <summary>
 /// 命令基類：封裝共用的掃描和顯示邏輯

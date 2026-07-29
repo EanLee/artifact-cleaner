@@ -1,7 +1,7 @@
-using NodeModuleCleaner.Models;
+using ArtifactCleaner.Models;
 using System.Text.Json;
 
-namespace NodeModuleCleaner.Services;
+namespace ArtifactCleaner.Services;
 
 public class ConfigService
 {
@@ -12,7 +12,7 @@ public class ConfigService
     public ConfigService(string? configPath = null)
     {
         var exeDir = Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory;
-        _configPath = configPath ?? Path.Combine(exeDir, "node-cleaner.json");
+        _configPath = configPath ?? Path.Combine(exeDir, "artifact-cleaner.json");
     }
 
     public AppConfig Load()

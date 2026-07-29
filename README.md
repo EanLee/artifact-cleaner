@@ -1,14 +1,15 @@
-# Node Modules Cleaner
+# Artifact Cleaner
 
-一個快速、簡單的 .NET CLI 工具，用於掃描、統計和清理專案目錄下的所有 `node_modules` 資料夾。
+一個快速、簡單的 .NET CLI 工具，用於掃描、統計和清理專案目錄下的建置產物資料夾（預設為 `node_modules`，可自訂為 `bin`、`obj` 等其他目標）。
 
 ## 功能特色
 
-- 🔍 **快速掃描** - 遞迴搜尋指定目錄下的所有 node_modules
+- 🔍 **快速掃描** - 遞迴搜尋指定目錄下的所有目標資料夾
 - 📊 **詳細統計** - 顯示每個資料夾的大小和最後修改時間
 - 🎯 **互動式選擇** - 使用方向鍵和空白鍵選擇要刪除的資料夾
 - 🎨 **美觀的介面** - 使用 Spectre.Console 提供現代化 CLI 體驗
 - ⚡ **效能優化** - 使用 yield return 和非同步 I/O 提升效能
+- 🛠️ **可自訂目標** - 透過 `config` 指令或 `--folder` 選項調整要清理的資料夾名稱
 
 ## 安裝
 
@@ -16,7 +17,7 @@
 
 ```bash
 git clone <repository-url>
-cd remove-node-module
+cd artifact-cleaner
 dotnet build -c Release
 ```
 
@@ -42,25 +43,25 @@ dotnet publish -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true
 ### 掃描模式（僅顯示，不刪除）
 
 ```bash
-node-cleaner scan <路徑>
+artifact-cleaner scan <路徑>
 ```
 
 範例:
 ```bash
-node-cleaner scan C:\Projects
-node-cleaner scan ~/projects
+artifact-cleaner scan C:\Projects
+artifact-cleaner scan ~/projects
 ```
 
 ### 清理模式（掃描 + 互動式刪除）
 
 ```bash
-node-cleaner clean <路徑>
+artifact-cleaner clean <路徑>
 ```
 
 範例:
 ```bash
-node-cleaner clean C:\Projects
-node-cleaner clean ~/projects
+artifact-cleaner clean C:\Projects
+artifact-cleaner clean ~/projects
 ```
 
 ### 選項參數
@@ -68,20 +69,35 @@ node-cleaner clean ~/projects
 - `--depth <數字>` - 限制掃描深度
 - `--min-size <位元組>` - 只顯示大於指定大小的資料夾
 - `--older-than <天數>` - 只顯示最後修改時間超過指定天數的資料夾
+- `--folder <名稱...>` - 臨時覆蓋要掃描的目標資料夾名稱（不影響 config，可指定多個）
 
 範例:
 ```bash
 # 只掃描 2 層深度
-node-cleaner scan C:\Projects --depth 2
+artifact-cleaner scan C:\Projects --depth 2
 
 # 只顯示大於 100MB 的資料夾
-node-cleaner scan C:\Projects --min-size 104857600
+artifact-cleaner scan C:\Projects --min-size 104857600
 
 # 只顯示 90 天前就沒更新過的資料夾
-node-cleaner scan C:\Projects --older-than 90
+artifact-cleaner scan C:\Projects --older-than 90
+
+# 臨時掃描 bin/obj 而非預設的 node_modules
+artifact-cleaner scan C:\Projects --folder bin obj
 
 # 組合使用
-node-cleaner clean ~/projects --depth 3 --min-size 52428800 --older-than 30
+artifact-cleaner clean ~/projects --depth 3 --min-size 52428800 --older-than 30
+```
+
+### 設定目標資料夾
+
+預設只掃描 `node_modules`。若要長期改變目標（例如改成 `bin`、`obj`），可透過 `config` 指令調整：
+
+```bash
+artifact-cleaner config list             # 顯示目前設定的目標資料夾
+artifact-cleaner config add bin obj      # 新增目標資料夾
+artifact-cleaner config remove obj       # 移除目標資料夾
+artifact-cleaner config reset            # 重設為預設值 (node_modules)
 ```
 
 ## 使用範例
@@ -125,14 +141,14 @@ node-cleaner clean ~/projects --depth 3 --min-size 52428800 --older-than 30
 ## 專案結構
 
 ```
-NodeModuleCleaner/
-├── src/NodeModuleCleaner/
+ArtifactCleaner/
+├── src/ArtifactCleaner/
 │   ├── Commands/          # CLI 命令實作
 │   ├── Core/              # 核心邏輯（掃描、計算、刪除）
 │   ├── Models/            # 資料模型
 │   └── Program.cs         # 程式進入點
 ├── tests/
-│   └── NodeModuleCleaner.Tests/  # 單元測試
+│   └── ArtifactCleaner.Tests/  # 單元測試
 └── docs/
     └── plans/             # 設計文件和實作計畫
 ```

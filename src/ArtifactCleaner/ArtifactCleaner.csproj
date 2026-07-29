@@ -16,9 +16,9 @@
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <AssemblyName>node-cleaner</AssemblyName>
-    <Product>Node Modules Cleaner</Product>
-    <Description>快速掃描和清理 node_modules 資料夾的 CLI 工具</Description>
+    <AssemblyName>artifact-cleaner</AssemblyName>
+    <Product>Artifact Cleaner</Product>
+    <Description>快速掃描和清理專案中建置產物資料夾（如 node_modules、bin、obj）的 CLI 工具</Description>
     <Company>EanLee</Company>
     <Authors>EanLee</Authors>
     <Copyright>Copyright © EanLee</Copyright>

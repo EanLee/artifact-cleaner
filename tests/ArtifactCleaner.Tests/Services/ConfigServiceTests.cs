@@ -1,6 +1,6 @@
-using NodeModuleCleaner.Services;
+using ArtifactCleaner.Services;
 
-namespace NodeModuleCleaner.Tests.Services;
+namespace ArtifactCleaner.Tests.Services;
 
 public class ConfigServiceTests : IDisposable
 {

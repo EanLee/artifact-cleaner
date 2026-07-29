@@ -1,4 +1,4 @@
-namespace NodeModuleCleaner.Core;
+namespace ArtifactCleaner.Core;
 
 /// <summary>
 /// 負責計算資料夾大小（優化版：使用 AllDirectories 避免遞迴）
