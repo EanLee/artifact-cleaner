@@ -88,7 +88,7 @@ public static class ConfigCommand
 
     private static Command CreateResetCommand()
     {
-        var cmd = new Command("reset", "重設為預設值 (node_modules)");
+        var cmd = new Command("reset", "重設為預設值");
         cmd.SetAction(_ =>
         {
             var service = new ConfigService();
