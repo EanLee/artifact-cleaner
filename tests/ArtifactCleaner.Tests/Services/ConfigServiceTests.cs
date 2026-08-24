@@ -1,3 +1,4 @@
+using ArtifactCleaner.Models;
 using ArtifactCleaner.Services;
 
 namespace ArtifactCleaner.Tests.Services;
@@ -17,7 +18,7 @@ public class ConfigServiceTests : IDisposable
     public void Load_NoFile_ReturnsDefault()
     {
         var config = _service.Load();
-        Assert.Equal(["node_modules"], config.Targets);
+        Assert.Equal(new AppConfig().Targets, config.Targets);
     }
 
     [Fact]
@@ -37,7 +38,7 @@ public class ConfigServiceTests : IDisposable
     {
         File.WriteAllText(_tempPath, "not valid json {{");
         var config = _service.Load();
-        Assert.Equal(["node_modules"], config.Targets);
+        Assert.Equal(new AppConfig().Targets, config.Targets);
     }
 
     public void Dispose()
